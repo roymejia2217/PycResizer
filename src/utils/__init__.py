@@ -1,0 +1,61 @@
+"""Utilidades del sistema."""
+
+from .config import (
+    DEFAULT_DPI,
+    SUPPORTED_FORMATS,
+    SUPPORTED_EXTENSIONS,
+    UNIT_CONVERSIONS,
+    VALID_UNITS,
+    RESAMPLE_FILTERS,
+    DEFAULT_OUTPUT_SUFFIX,
+    DEFAULT_RESAMPLE,
+    OUTPUT_DIR,
+    SIZE_PRESETS,
+    SizePreset,
+    get_preset_categories,
+    get_presets_by_category,
+    get_all_preset_names,
+    get_preset_by_name,
+    search_presets,
+    search_preset_names,
+)
+from .exceptions import (
+    ImageProcessorError,
+    ValidationError,
+    ConversionError,
+    ProcessingError,
+    FileSystemError,
+)
+from .icons import (
+    get_resource_path,
+    load_window_icon,
+    set_taskbar_icon,
+)
+
+__all__ = [
+    "DEFAULT_DPI",
+    "SUPPORTED_FORMATS",
+    "SUPPORTED_EXTENSIONS",
+    "UNIT_CONVERSIONS",
+    "VALID_UNITS",
+    "RESAMPLE_FILTERS",
+    "DEFAULT_OUTPUT_SUFFIX",
+    "DEFAULT_RESAMPLE",
+    "OUTPUT_DIR",
+    "SIZE_PRESETS",
+    "SizePreset",
+    "get_preset_categories",
+    "get_presets_by_category",
+    "get_all_preset_names",
+    "get_preset_by_name",
+    "search_presets",
+    "search_preset_names",
+    "ImageProcessorError",
+    "ValidationError",
+    "ConversionError",
+    "ProcessingError",
+    "FileSystemError",
+    "get_resource_path",
+    "load_window_icon",
+    "set_taskbar_icon",
+]
