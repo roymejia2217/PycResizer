@@ -95,7 +95,10 @@ El ejecutable se generara en `dist/PycResizer.exe`.
 PycResizer/
 ├── assets/
 │   ├── icon.ico          # Icono de ventana
-│   └── pyc.png          # Logo de aplicacion
+│   ├── pyc.png          # Logo de aplicacion
+│   ├── ui.webp          # Captura de interfaz
+│   ├── preset.webp      # Captura de presets
+│   └── modo.webp        # Captura de modos
 ├── src/
 │   ├── app.py           # Punto de entrada
 │   ├── core/
@@ -119,6 +122,26 @@ PycResizer/
 ├── pycresizer.spec
 └── build.py
 ```
+
+## Capturas de pantalla
+
+### Interfaz principal
+
+<p align="center">
+  <img src="assets/ui.webp" alt="Interfaz principal de PycResizer" width="450">
+</p>
+
+### Presets disponibles
+
+<p align="center">
+  <img src="assets/preset.webp" alt="Presets predefinidos" width="450">
+</p>
+
+### Modos de redimensionamiento
+
+<p align="center">
+  <img src="assets/modo.webp" alt="Modos de redimensionamiento" width="450">
+</p>
 
 ## Licencia
 
