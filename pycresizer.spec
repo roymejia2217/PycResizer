@@ -99,7 +99,7 @@ exe = EXE(
     entitlements_file=None,
     icon=str(icon_file) if icon_exists else None,
     version_info={
-        "Version": "1.0.0",
+        "Version": "1.1.0",
         "CompanyName": "PycResizer",
         "FileDescription": "Procesador de imágenes por lotes",
         "ProductName": "PycResizer",
