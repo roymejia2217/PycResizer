@@ -7,7 +7,7 @@ from typing import Callable, List, Optional, Tuple
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 
-from PIL import Image
+from PIL import Image, ImageOps
 
 from ..utils import SUPPORTED_EXTENSIONS, FileSystemError
 from .image_processor import ImageProcessor, ResizeMode
@@ -93,6 +93,7 @@ class BatchHandler:
 
             try:
                 with Image.open(file_path) as img:
+                    img = ImageOps.exif_transpose(img)
                     original_size = img.size
 
                 output_name = f"{file_path.stem}{suffix}{file_path.suffix}"

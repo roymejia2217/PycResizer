@@ -4,7 +4,7 @@ from enum import Enum, auto
 from pathlib import Path
 from typing import Tuple, Union
 
-from PIL import Image
+from PIL import Image, ImageOps
 
 from ..utils import (
     DEFAULT_DPI,
@@ -57,6 +57,7 @@ class ImageProcessor:
 
         try:
             with Image.open(input_path) as img:
+                img = ImageOps.exif_transpose(img)
                 original_size = img.size
                 target_width_px, target_height_px = self._resolve_dimensions(
                     img, width, height, width_unit, height_unit, self.dpi
