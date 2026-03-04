@@ -5,6 +5,11 @@
 <h1 align="center">PycResizer</h1>
 
 <p align="center">
+  <b>English Version</b> •
+  <a href="README_ES.md">Versión en Español</a>
+</p>
+
+<p align="center">
   <a href="https://www.python.org/">
     <img src="https://img.shields.io/badge/Python-3.10+-blue.svg" alt="Python Version">
   </a>
@@ -22,97 +27,97 @@
   </a>
 </p>
 
-Procesador de imagenes por lotes con interfaz grafica. Redimensiona multiples imagenes simultaneamente con presets predefinidos y conversion de unidades.
+Batch image processor with a graphical user interface. Resize multiple images simultaneously using built-in presets and unit conversion capabilities.
 
-## Caracteristicas
+## Key Features
 
-- Redimensionamiento por lotes de multiples imagenes
-- 44 presets predefinidos (fotos, documentos, redes sociales, pantalla)
-- 4 modos de redimensionamiento: FIT, STRETCH, FILL, CROP
-- Conversion de unidades: px, cm, mm, pulgadas
-- Interfaz con pestañas Basico y Avanzado
-- Proceso paralelo con workers dinamicos
-- Soporte para PNG, JPEG, BMP, TIFF, WEBP, GIF
+- Batch resizing of multiple images
+- 44 built-in presets (Photos, Documents, Social Media, Display)
+- 4 Resizing Modes: FIT, STRETCH, FILL, CROP
+- Unit conversion: px, cm, mm, inches
+- Tabbed interface (Basic and Advanced settings)
+- Parallel processing with dynamic workers
+- Support for PNG, JPEG, BMP, TIFF, WEBP, and GIF
 
-## Requisitos Previos
+## Prerequisites
 
-- Python 3.10 o superior
-- Windows (ejecutable portable)
+- Python 3.10 or higher
+- Windows (for portable executable)
 
-## Instalacion
+## Installation
 
-### Como aplicacion portable
+### As a Portable Application
 
-Descarga el ejecutable `PycResizer.exe` desde la seccion Releases y ejecutalo directamente.
+Download the `PycResizer.exe` executable from the Releases section and run it directly.
 
-### Desde codigo fuente
+### From Source Code
 
 ```bash
-# Clonar el repositorio
+# Clone the repository
 git clone https://github.com/tu-usuario/PycResizer.git
 cd PycResizer
 
-# Crear entorno virtual
+# Create virtual environment
 python -m venv venv
 venv\Scripts\activate
 
-# Instalar dependencias
+# Install dependencies
 pip install -r requirements.txt
 
-# Ejecutar aplicacion
+# Run application
 python src/app.py
 ```
 
-### Construir ejecutable
+### Building the Executable
 
 ```bash
 pip install pyinstaller
 pyinstaller pycresizer.spec --clean
 ```
 
-El ejecutable se generara en `dist/PycResizer.exe`.
+The executable will be generated in `dist/PycResizer.exe`.
 
-## Uso
+## Usage
 
-1. Selecciona imagenes individuales o una carpeta completa
-2. Elige un preset o ingresa dimensiones manualmente
-3. Selecciona el modo de redimensionamiento
-4. Define la carpeta de salida
-5. Haz clic en Iniciar
+1. Select individual images or an entire folder.
+2. Choose a preset or enter dimensions manually.
+3. Select the desired resizing mode.
+4. Define the output folder.
+5. Click **Start**.
 
-### Modos de redimensionamiento
+### Resizing Modes
 
-| Modo | Descripcion |
+| Mode | Description |
 |------|-------------|
-| FIT | Ajusta la imagen manteniendo relacion aspecto |
-| STRETCH | Estira a dimensiones exactas |
-| FILL | Rellena con fondo blanco |
-| CROP | Recorta desde el centro |
+| FIT | Resizes the image while maintaining its aspect ratio. |
+| STRETCH | Stretches the image to the exact dimensions specified. |
+| FILL | Fills the target area, adding a background if necessary. |
+| CROP | Resizes and crops the image from the center to fill the area. |
 
-## Estructura
+## Project Structure
 
 ```
 PycResizer/
 ├── assets/
-│   ├── icon.ico          # Icono de ventana
-│   ├── pyc.png          # Logo de aplicacion
-│   ├── ui.webp          # Captura de interfaz
-│   ├── preset.webp      # Captura de presets
-│   └── modo.webp        # Captura de modos
+│   ├── icon.ico          # Window icon
+│   ├── pyc.png          # Application logo
+│   ├── ui.webp          # Main UI screenshot
+│   ├── preset.webp      # Presets screenshot
+│   └── modo.webp        # Modes screenshot
 ├── src/
-│   ├── app.py           # Punto de entrada
+│   ├── app.py           # Entry point
 │   ├── core/
-│   │   ├── batch_handler.py    # Procesamiento por lotes
-│   │   ├── image_processor.py  # Procesador de imagenes
-│   │   └── unit_converter.py    # Conversion de unidades
+│   │   ├── batch_handler.py    # Batch processing logic
+│   │   ├── image_processor.py  # Image processing logic
+│   │   └── unit_converter.py    # Unit conversion utility
 │   ├── gui/
-│   │   ├── main_window.py       # Ventana principal
-│   │   ├── components.py        # Componentes GUI
-│   │   └── validators.py        # Validadores
+│   │   ├── main_window.py       # Main window implementation
+│   │   ├── components.py        # Custom GUI components
+│   │   └── validators.py        # Input validation
 │   └── utils/
-│       ├── config.py      # Configuracion y presets
-│       ├── icons.py       # Gestion de iconos
-│       └── exceptions.py  # Excepciones personalizadas
+│       ├── config.py      # Configuration and preset definitions
+│       ├── icons.py       # Icon management
+│       └── exceptions.py  # Custom exceptions
 ├── tests/
 │   ├── test_unit_conversion.py
 │   ├── test_resize_modes.py
@@ -123,26 +128,26 @@ PycResizer/
 └── build.py
 ```
 
-## Capturas de pantalla
+## Screenshots
 
-### Interfaz principal
-
-<p align="center">
-  <img src="assets/ui.webp" alt="Interfaz principal de PycResizer" width="450">
-</p>
-
-### Presets disponibles
+### Main Interface
 
 <p align="center">
-  <img src="assets/preset.webp" alt="Presets predefinidos" width="450">
+  <img src="assets/ui.webp" alt="PycResizer Main Interface" width="450">
 </p>
 
-### Modos de redimensionamiento
+### Available Presets
 
 <p align="center">
-  <img src="assets/modo.webp" alt="Modos de redimensionamiento" width="450">
+  <img src="assets/preset.webp" alt="Available Presets" width="450">
 </p>
 
-## Licencia
+### Resizing Modes
 
-MIT License - consulta el archivo LICENSE para mas detalles.
+<p align="center">
+  <img src="assets/modo.webp" alt="Resizing Modes" width="450">
+</p>
+
+## License
+
+MIT License - See the LICENSE file for more details.
