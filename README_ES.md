@@ -98,34 +98,32 @@ El ejecutable se generara en `dist/PycResizer.exe`.
 
 ```
 PycResizer/
-├── assets/
-│   ├── icon.ico          # Icono de ventana
-│   ├── pyc.png          # Logo de aplicacion
-│   ├── ui.webp          # Captura de interfaz
-│   ├── preset.webp      # Captura de presets
-│   └── modo.webp        # Captura de modos
+├── assets/                 # Recursos visuales e iconos
 ├── src/
-│   ├── app.py           # Punto de entrada
-│   ├── core/
-│   │   ├── batch_handler.py    # Procesamiento por lotes
-│   │   ├── image_processor.py  # Procesador de imagenes
-│   │   └── unit_converter.py    # Conversion de unidades
-│   ├── gui/
-│   │   ├── main_window.py       # Ventana principal
-│   │   ├── components.py        # Componentes GUI
-│   │   └── validators.py        # Validadores
-│   └── utils/
-│       ├── config.py      # Configuracion y presets
-│       ├── icons.py       # Gestion de iconos
-│       └── exceptions.py  # Excepciones personalizadas
-├── tests/
-│   ├── test_unit_conversion.py
-│   ├── test_resize_modes.py
+│   ├── app.py              # Punto de entrada de la aplicacion
+│   ├── core/               # Logica de procesamiento
+│   │   ├── batch_handler.py
+│   │   ├── image_processor.py
+│   │   └── unit_converter.py
+│   ├── gui/                # Componentes de interfaz de usuario
+│   │   ├── components.py
+│   │   ├── main_window.py
+│   │   ├── settings_window.py
+│   │   └── validators.py
+│   └── utils/              # Utilidades compartidas
+│       ├── config.py
+│       ├── exceptions.py
+│       ├── i18n.py
+│       └── icons.py
+├── tests/                  # Suites de pruebas
+│   ├── test_batch_performance.py
+│   ├── test_core_resilience.py
 │   ├── test_crop_id_card.py
-│   └── test_batch_performance.py
-├── requirements.txt
-├── pycresizer.spec
-└── build.py
+│   ├── test_presets_i18n.py
+│   ├── test_resize_modes.py
+│   └── test_unit_conversion.py
+├── pycresizer.spec         # Especificacion de PyInstaller
+└── requirements.txt        # Dependencias del proyecto
 ```
 
 ## Capturas de pantalla

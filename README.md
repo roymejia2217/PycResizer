@@ -98,34 +98,32 @@ The executable will be generated in `dist/PycResizer.exe`.
 
 ```
 PycResizer/
-├── assets/
-│   ├── icon.ico          # Window icon
-│   ├── pyc.png          # Application logo
-│   ├── ui.webp          # Main UI screenshot
-│   ├── preset.webp      # Presets screenshot
-│   └── modo.webp        # Modes screenshot
+├── assets/                 # Visual assets and icons
 ├── src/
-│   ├── app.py           # Entry point
-│   ├── core/
-│   │   ├── batch_handler.py    # Batch processing logic
-│   │   ├── image_processor.py  # Image processing logic
-│   │   └── unit_converter.py    # Unit conversion utility
-│   ├── gui/
-│   │   ├── main_window.py       # Main window implementation
-│   │   ├── components.py        # Custom GUI components
-│   │   └── validators.py        # Input validation
-│   └── utils/
-│       ├── config.py      # Configuration and preset definitions
-│       ├── icons.py       # Icon management
-│       └── exceptions.py  # Custom exceptions
-├── tests/
-│   ├── test_unit_conversion.py
-│   ├── test_resize_modes.py
+│   ├── app.py              # Application entry point
+│   ├── core/               # Processing logic
+│   │   ├── batch_handler.py
+│   │   ├── image_processor.py
+│   │   └── unit_converter.py
+│   ├── gui/                # User interface components
+│   │   ├── components.py
+│   │   ├── main_window.py
+│   │   ├── settings_window.py
+│   │   └── validators.py
+│   └── utils/              # Shared utilities
+│       ├── config.py
+│       ├── exceptions.py
+│       ├── i18n.py
+│       └── icons.py
+├── tests/                  # Test suites
+│   ├── test_batch_performance.py
+│   ├── test_core_resilience.py
 │   ├── test_crop_id_card.py
-│   └── test_batch_performance.py
-├── requirements.txt
-├── pycresizer.spec
-└── build.py
+│   ├── test_presets_i18n.py
+│   ├── test_resize_modes.py
+│   └── test_unit_conversion.py
+├── pycresizer.spec         # PyInstaller build specification
+└── requirements.txt        # Project dependencies
 ```
 
 ## Screenshots
