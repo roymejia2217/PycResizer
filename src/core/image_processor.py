@@ -1,10 +1,13 @@
 """Procesamiento de imagenes individuales."""
 
+import os
+import uuid
 from enum import Enum, auto
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Tuple, Union, Optional, Callable
 
 from PIL import Image, ImageOps
+import piexif
 
 from ..utils import (
     DEFAULT_DPI,
@@ -12,6 +15,7 @@ from ..utils import (
     ProcessingError,
     ValidationError,
 )
+from ..utils.i18n import tr
 from .unit_converter import UnitConverter
 
 Numeric = Union[int, float]
@@ -44,28 +48,37 @@ class ImageProcessor:
         mode: ResizeMode = ResizeMode.FIT,
         resample: int = Image.Resampling.LANCZOS,
         background: Tuple[int, int, int, int] = (255, 255, 255, 255),
+        cancel_check: Optional[Callable[[], bool]] = None,
     ) -> Tuple[int, int]:
         """Redimensiona una imagen."""
+        if cancel_check and cancel_check():
+            raise ProcessingError(tr.get("err.process_cancelled"), code="CANCELLED")
+
         if not input_path.exists():
-            raise ValidationError(f"Archivo no existe: {input_path}", code="FILE_NOT_FOUND")
+            raise ValidationError(tr.get("err.file_not_found", path=str(input_path)), code="FILE_NOT_FOUND")
 
         if input_path.suffix.lower() not in SUPPORTED_EXTENSIONS:
             raise ValidationError(
-                f"Formato no soportado: {input_path.suffix}",
+                tr.get("err.unsupported_format", ext=input_path.suffix),
                 code="UNSUPPORTED_FORMAT"
             )
 
         try:
             with Image.open(input_path) as img:
+                # Extraer metadatos antes de manipulaciones destructivas
+                icc_profile = img.info.get('icc_profile')
+                exif_data = img.info.get('exif')
+
                 img = ImageOps.exif_transpose(img)
                 original_size = img.size
+                
                 target_width_px, target_height_px = self._resolve_dimensions(
                     img, width, height, width_unit, height_unit, self.dpi
                 )
 
                 if target_width_px <= 0 or target_height_px <= 0:
                     raise ValidationError(
-                        "Dimensiones deben ser mayores que cero",
+                        tr.get("err.invalid_dimensions"),
                         code="INVALID_DIMENSIONS"
                     )
 
@@ -73,18 +86,26 @@ class ImageProcessor:
                     original_size, target_width_px, target_height_px, mode
                 )
 
+                if cancel_check and cancel_check():
+                    raise ProcessingError(tr.get("err.process_cancelled"), code="CANCELLED")
+
                 processed = self._apply_resize(img, final_size, mode, resample, background)
 
-                self._save_image(processed, output_path, self.dpi)
+                if cancel_check and cancel_check():
+                    raise ProcessingError(tr.get("err.process_cancelled"), code="CANCELLED")
+
+                self._save_image(processed, output_path, self.dpi, icc_profile, exif_data)
 
                 return final_size
 
+        except ProcessingError:
+            raise
         except (OSError, IOError) as e:
-            raise ProcessingError(f"Error al procesar imagen: {str(e)}", code="IO_ERROR")
+            raise ProcessingError(tr.get("err.io_error", error=str(e)), code="IO_ERROR")
         except ValidationError:
             raise
         except Exception as e:
-            raise ProcessingError(f"Error inesperado: {str(e)}", code="UNEXPECTED_ERROR")
+            raise ProcessingError(tr.get("err.unexpected", error=str(e)), code="UNEXPECTED_ERROR")
 
     def _resolve_dimensions(
         self,
@@ -118,7 +139,7 @@ class ImageProcessor:
             return (w_px, h_px)
 
         raise ValidationError(
-            "Debe especificar al menos una dimension",
+            tr.get("err.missing_dims"),
             code="MISSING_DIMENSIONS"
         )
 
@@ -207,16 +228,46 @@ class ImageProcessor:
 
         return img.resize(size, resample)
 
+    @staticmethod
+    def _reset_exif_orientation(exif_bytes: Optional[bytes]) -> Optional[bytes]:
+        """
+        Sobrescribe la etiqueta Orientation (0x0112) en los metadatos EXIF crudos
+        estableciéndola en 1 (Normal) usando la librería estándar piexif.
+        Evita usar Pillow nativo para no destruir metadatos como MakerNote o GPS.
+        """
+        if not exif_bytes:
+            return None
+
+        try:
+            exif_dict = piexif.load(exif_bytes)
+            
+            if piexif.ImageIFD.Orientation in exif_dict.get("0th", {}):
+                exif_dict["0th"][piexif.ImageIFD.Orientation] = 1
+                
+            return piexif.dump(exif_dict)
+        except Exception:
+            # En caso de que el EXIF original este corrupto o no sea parseable por piexif,
+            # lo retornamos intacto para no perder la data y no quebrar el pipeline.
+            return exif_bytes
+
     def _save_image(
         self,
         img: Image.Image,
         output_path: Path,
         dpi: int,
+        icc_profile: Optional[bytes] = None,
+        exif_data: Optional[bytes] = None,
     ) -> None:
-        """Guarda la imagen procesada."""
+        """Guarda la imagen procesada de forma atómica y segura."""
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
         save_kwargs = {}
+
+        # Retener perfiles de color y metadatos EXIF
+        if icc_profile:
+            save_kwargs["icc_profile"] = icc_profile
+        if exif_data:
+            save_kwargs["exif"] = self._reset_exif_orientation(exif_data)
 
         if output_path.suffix.lower() in (".jpg", ".jpeg"):
             if img.mode in ("RGBA", "P"):
@@ -227,4 +278,18 @@ class ImageProcessor:
             save_kwargs["optimize"] = True
 
         dpi_to_save = (dpi, dpi)
-        img.save(output_path, dpi=dpi_to_save, **save_kwargs)
+        
+        # Escritura atómica
+        temp_filename = f".tmp_{uuid.uuid4().hex}_{output_path.name}"
+        temp_path = output_path.parent / temp_filename
+        
+        try:
+            img.save(temp_path, dpi=dpi_to_save, **save_kwargs)
+            os.replace(temp_path, output_path)
+        except Exception:
+            if temp_path.exists():
+                try:
+                    temp_path.unlink()
+                except OSError:
+                    pass
+            raise

@@ -12,6 +12,7 @@ from PIL import Image, ImageOps
 from ..utils import SUPPORTED_EXTENSIONS, FileSystemError
 from .image_processor import ImageProcessor, ResizeMode
 from ..utils.config import VALID_UNITS
+from ..utils.i18n import tr
 
 
 def _get_optimal_workers() -> int:
@@ -77,7 +78,7 @@ class BatchHandler:
                     output_path=output_dir,
                     success=False,
                     original_size=(0, 0),
-                    error_message=f"No se pudo crear directorio de salida: {str(e)}"
+                    error_message=tr.get("msg.cant_create_dir", error=str(e))
                 )
             ]
 
@@ -88,7 +89,7 @@ class BatchHandler:
                     output_path=Path(),
                     success=False,
                     original_size=(0, 0),
-                    error_message="Proceso cancelado"
+                    error_message=tr.get("err.process_cancelled")
                 )
 
             try:
@@ -98,6 +99,14 @@ class BatchHandler:
 
                 output_name = f"{file_path.stem}{suffix}{file_path.suffix}"
                 output_path = output_dir / output_name
+                
+                # Prevenir colisión destructiva (Input = Output)
+                try:
+                    if file_path.resolve() == output_path.resolve():
+                        output_name = f"{file_path.stem}_pyc{file_path.suffix}"
+                        output_path = output_dir / output_name
+                except Exception:
+                    pass
 
                 final_size = self._processor.resize(
                     input_path=file_path,
@@ -107,6 +116,7 @@ class BatchHandler:
                     width_unit=width_unit,
                     height_unit=height_unit,
                     mode=mode,
+                    cancel_check=lambda: self._cancelled,
                 )
 
                 return ProcessingResult(
@@ -157,7 +167,7 @@ class BatchHandler:
     def scan_directory(directory: Path, recursive: bool = False) -> List[Path]:
         """Escanea un directorio buscando imagenes."""
         if not directory.exists():
-            raise FileSystemError(f"Directorio no existe: {directory}", code="DIR_NOT_FOUND")
+            raise FileSystemError(tr.get("err.dir_not_found", dir=str(directory)), code="DIR_NOT_FOUND")
 
         files = []
         pattern = "**/*" if recursive else "*"

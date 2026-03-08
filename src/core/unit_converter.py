@@ -4,6 +4,7 @@ from typing import Union
 from PIL import Image
 
 from ..utils import DEFAULT_DPI, VALID_UNITS, ConversionError, ValidationError
+from ..utils.i18n import tr
 
 Numeric = Union[int, float]
 
@@ -16,15 +17,15 @@ class UnitConverter:
         """Convierte un valor a pixeles."""
         if unit not in VALID_UNITS:
             raise ValidationError(
-                f"Unidad '{unit}' no valida. Use: {', '.join(VALID_UNITS)}",
+                tr.get("err.invalid_unit", unit=unit),
                 code="INVALID_UNIT"
             )
 
         if value < 0:
-            raise ValidationError("El valor no puede ser negativo", code="NEGATIVE_VALUE")
+            raise ValidationError(tr.get("err.negative_value"), code="NEGATIVE_VALUE")
 
         if dpi <= 0:
-            raise ValidationError("DPI debe ser mayor que cero", code="INVALID_DPI")
+            raise ValidationError(tr.get("err.invalid_dpi"), code="INVALID_DPI")
 
         try:
             if unit == "px":
@@ -36,21 +37,21 @@ class UnitConverter:
             elif unit == "mm":
                 return int((value / 25.4) * dpi)
         except (TypeError, ValueError) as e:
-            raise ConversionError(f"Error al convertir {value}{unit}: {str(e)}", code="CONVERSION_FAILED")
+            raise ConversionError(tr.get("err.conversion_failed", value=value, unit=unit, error=str(e)), code="CONVERSION_FAILED")
 
-        raise ConversionError(f"Conversion no implementada: {unit}", code="UNSUPPORTED_UNIT")
+        raise ConversionError(tr.get("err.unsupported_unit", unit=unit), code="UNSUPPORTED_UNIT")
 
     @staticmethod
     def from_pixels(pixels: int, unit: str, dpi: int = DEFAULT_DPI) -> float:
         """Convierte pixeles a una unidad."""
         if unit not in VALID_UNITS:
-            raise ValidationError(f"Unidad '{unit}' no valida", code="INVALID_UNIT")
+            raise ValidationError(tr.get("err.invalid_unit", unit=unit), code="INVALID_UNIT")
         
         if pixels < 0:
-            raise ValidationError("Los pixeles no pueden ser negativos", code="NEGATIVE_PIXELS")
+            raise ValidationError(tr.get("err.negative_pixels"), code="NEGATIVE_PIXELS")
         
         if dpi <= 0:
-            raise ValidationError("DPI debe ser mayor que cero", code="INVALID_DPI")
+            raise ValidationError(tr.get("err.invalid_dpi"), code="INVALID_DPI")
         
         if unit == "px":
             return float(pixels)
@@ -61,7 +62,7 @@ class UnitConverter:
         elif unit == "mm":
             return (pixels / dpi) * 25.4
         
-        raise ConversionError(f"Conversion no implementada: {unit}", code="UNSUPPORTED_UNIT")
+        raise ConversionError(tr.get("err.unsupported_unit", unit=unit), code="UNSUPPORTED_UNIT")
 
     @staticmethod
     def get_image_dpi(image: Image.Image) -> int:

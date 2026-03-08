@@ -47,6 +47,7 @@ a = Analysis(
         "PIL.ImageOps",
         "PIL.ImageDraw",
         "PIL.ImageFilter",
+        "piexif",
         "ttkbootstrap",
         "ttkbootstrap.themes",
         "ttkbootstrap.dialogs",

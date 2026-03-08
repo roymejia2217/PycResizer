@@ -3,6 +3,7 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Tuple
+from .i18n import tr
 
 DEFAULT_DPI: int = 300
 SUPPORTED_FORMATS: Tuple[str, ...] = ("PNG", "JPEG", "JPG", "BMP", "TIFF", "WEBP", "GIF")
@@ -15,7 +16,7 @@ UNIT_CONVERSIONS: Dict[str, float] = {
     "in": 2.54,
 }
 
-VALID_UNITS: Tuple[str, ...] = ("px", "cm", "mm", "in")
+VALID_UNITS: Tuple[str, ...] = tuple(UNIT_CONVERSIONS.keys())
 
 RESAMPLE_FILTERS = {
     "LANCZOS": "LANCZOS",
@@ -34,87 +35,106 @@ OUTPUT_DIR: Path = Path.home() / "Downloads" / "PycResizer" / "output"
 @dataclass
 class SizePreset:
     """Preset de tamaño predefinido."""
-    name: str
+    name_key: str
     width: float
     height: float
     unit: str
-    category: str
+    category_key: str
     keywords: List[str] = field(default_factory=list)
+
+    @property
+    def name(self) -> str:
+        translated = tr.get(self.name_key)
+        return translated if translated != self.name_key else self.name_key
+
+    @property
+    def category(self) -> str:
+        return tr.get(self.category_key)
 
 
 SIZE_PRESETS: List[SizePreset] = [
-    SizePreset("4 × 6\" (10×15 cm)", 4, 6, "in", "Fotos", ["4x6", "10x15", "foto", "polaroid"]),
-    SizePreset("5 × 7\" (13×18 cm)", 5, 7, "in", "Fotos", ["5x7", "13x18", "retrato"]),
-    SizePreset("6 × 8\" (15×20 cm)", 6, 8, "in", "Fotos", ["6x8", "15x20", "marco"]),
-    SizePreset("8 × 10\" (20×25 cm)", 8, 10, "in", "Fotos", ["8x10", "20x25", "profesional"]),
-    SizePreset("11 × 14\" (28×36 cm)", 11, 14, "in", "Fotos", ["11x14", "28x36", "galeria"]),
-    SizePreset("12 × 16\" (30×40 cm)", 12, 16, "in", "Fotos", ["12x16", "30x40", "arte"]),
-    SizePreset("16 × 20\" (40×50 cm)", 16, 20, "in", "Fotos", ["16x20", "40x50", "poster"]),
-    SizePreset("24 × 36\" (60×90 cm)", 24, 36, "in", "Fotos", ["24x36", "60x90", "gran formato"]),
-    SizePreset("A3 (29.7×42 cm)", 29.7, 42, "cm", "ISO", ["a3", "iso", "dibujo"]),
-    SizePreset("A4 (21×29.7 cm)", 21, 29.7, "cm", "ISO", ["a4", "iso", "documento", "oficina"]),
-    SizePreset("A5 (14.8×21 cm)", 14.8, 21, "cm", "ISO", ["a5", "iso", "tarjeta", "folleto"]),
-    SizePreset("Carta (8.5×11\")", 8.5, 11, "in", "Documentos", ["carta", "letter", "oficio"]),
-    SizePreset("Legal (8.5×14\")", 8.5, 14, "in", "Documentos", ["legal", "contrato"]),
-    SizePreset("Tabloide (11×17\")", 11, 17, "in", "Documentos", ["tabloide", "periódico"]),
-    SizePreset("Carnet (32×43 mm)", 32, 43, "mm", "Identificación", ["carnet", "id", "cedula", "chile"]),
-    SizePreset("Pasaporte (51×51 mm)", 51, 51, "mm", "Identificación", ["pasaporte", "visa"]),
-    SizePreset("Visa (50×50 mm)", 50, 50, "mm", "Identificación", ["visa"]),
-    SizePreset("HD 720p (1280×720)", 1280, 720, "px", "Pantalla", ["720p", "hd", "pantalla", "notebook"]),
-    SizePreset("Full HD 1080p (1920×1080)", 1920, 1080, "px", "Pantalla", ["1080p", "full hd", "fhd", "escritorio", "monitor"]),
-    SizePreset("WQHD 1440p (2560×1440)", 2560, 1440, "px", "Pantalla", ["1440p", "wqhd", "qhd", "2k"]),
-    SizePreset("4K UHD (3840×2160)", 3840, 2160, "px", "Pantalla", ["4k", "uhd", "3840", "2160"]),
-    SizePreset("SD 480p (854×480)", 854, 480, "px", "Video", ["480p", "sd", "streaming"]),
-    SizePreset("HD 720p (1280×720)", 1280, 720, "px", "Video", ["720p", "hd", "broadcast"]),
-    SizePreset("Full HD 1080p (1920×1080)", 1920, 1080, "px", "Video", ["1080p", "full hd", "youtube"]),
-    SizePreset("2K DCI (2048×1080)", 2048, 1080, "px", "Video", ["2k", "dci", "cine"]),
-    SizePreset("QHD 1440p (2560×1440)", 2560, 1440, "px", "Video", ["1440p", "qhd", "gaming"]),
-    SizePreset("4K UHD (3840×2160)", 3840, 2160, "px", "Video", ["4k", "uhd", "netflix"]),
-    SizePreset("4K DCI (4096×2160)", 4096, 2160, "px", "Video", ["4k", "dci", "cine digital"]),
-    SizePreset("8K UHD (7680×4320)", 7680, 4320, "px", "Video", ["8k", "uhd"]),
-    SizePreset("Instagram Cuadrado (1080×1080)", 1080, 1080, "px", "Redes", ["instagram", "fb", "feed", "1:1"]),
-    SizePreset("Instagram Horizontal (1080×566)", 1080, 566, "px", "Redes", ["instagram", "horizontal"]),
-    SizePreset("Instagram Vertical (1080×1350)", 1080, 1350, "px", "Redes", ["instagram", "vertical", "4:5"]),
-    SizePreset("Instagram Stories (1080×1920)", 1080, 1920, "px", "Redes", ["stories", "reels", "tiktok", "9:16", "instagram"]),
-    SizePreset("Instagram Perfil (320×320)", 320, 320, "px", "Redes", ["perfil", "avatar"]),
-    SizePreset("Facebook Feed (1200×630)", 1200, 630, "px", "Redes", ["facebook", "feed", "publicacion"]),
-    SizePreset("Facebook Cover (820×312)", 820, 312, "px", "Redes", ["facebook", "cover", "portada"]),
-    SizePreset("Facebook Stories (1080×1920)", 1080, 1920, "px", "Redes", ["facebook", "stories"]),
-    SizePreset("YouTube Thumbnail (1280×720)", 1280, 720, "px", "Redes", ["youtube", "thumbnail", "miniatura"]),
-    SizePreset("YouTube Canal (2560×1440)", 2560, 1440, "px", "Redes", ["youtube", "banner", "canal"]),
-    SizePreset("YouTube Shorts (1080×1920)", 1080, 1920, "px", "Redes", ["youtube", "shorts", "vertical"]),
-    SizePreset("TikTok/Reels (1080×1920)", 1080, 1920, "px", "Redes", ["tiktok", "reels", "shorts", "vertical"]),
-    SizePreset("Twitter/X Post (1600×900)", 1600, 900, "px", "Redes", ["twitter", "x", "post"]),
-    SizePreset("LinkedIn (1200×627)", 1200, 627, "px", "Redes", ["linkedin", "profesional"]),
-    SizePreset("Pinterest (1000×1500)", 1000, 1500, "px", "Redes", ["pinterest", "pin", "2:3"]),
+    SizePreset("preset.photo_4x6", 4, 6, "in", "cat.photos", ["4x6", "10x15", "foto", "polaroid"]),
+    SizePreset("preset.photo_5x7", 5, 7, "in", "cat.photos", ["5x7", "13x18", "retrato"]),
+    SizePreset("preset.photo_6x8", 6, 8, "in", "cat.photos", ["6x8", "15x20", "marco"]),
+    SizePreset("preset.photo_8x10", 8, 10, "in", "cat.photos", ["8x10", "20x25", "profesional"]),
+    SizePreset("preset.photo_11x14", 11, 14, "in", "cat.photos", ["11x14", "28x36", "galeria"]),
+    SizePreset("preset.photo_12x16", 12, 16, "in", "cat.photos", ["12x16", "30x40", "arte"]),
+    SizePreset("preset.photo_16x20", 16, 20, "in", "cat.photos", ["16x20", "40x50", "poster"]),
+    SizePreset("preset.photo_24x36", 24, 36, "in", "cat.photos", ["24x36", "60x90", "gran formato"]),
+    SizePreset("preset.a3", 29.7, 42, "cm", "cat.iso", ["a3", "iso", "dibujo"]),
+    SizePreset("preset.a4", 21, 29.7, "cm", "cat.iso", ["a4", "iso", "documento", "oficina"]),
+    SizePreset("preset.a5", 14.8, 21, "cm", "cat.iso", ["a5", "iso", "tarjeta", "folleto"]),
+    SizePreset("preset.letter", 8.5, 11, "in", "cat.docs", ["carta", "letter", "oficio"]),
+    SizePreset("preset.legal", 8.5, 14, "in", "cat.docs", ["legal", "contrato"]),
+    SizePreset("preset.tabloid", 11, 17, "in", "cat.docs", ["tabloide", "periódico"]),
+    SizePreset("preset.id", 32, 43, "mm", "cat.id", ["carnet", "id", "cedula", "chile"]),
+    SizePreset("preset.passport", 51, 51, "mm", "cat.id", ["pasaporte", "visa"]),
+    SizePreset("preset.visa", 50, 50, "mm", "cat.id", ["visa"]),
+    SizePreset("preset.screen_720p", 1280, 720, "px", "cat.screen", ["720p", "hd", "pantalla", "notebook"]),
+    SizePreset("preset.screen_1080p", 1920, 1080, "px", "cat.screen", ["1080p", "full hd", "fhd", "escritorio", "monitor"]),
+    SizePreset("preset.screen_1440p", 2560, 1440, "px", "cat.screen", ["1440p", "wqhd", "qhd", "2k"]),
+    SizePreset("preset.screen_4k", 3840, 2160, "px", "cat.screen", ["4k", "uhd", "3840", "2160"]),
+    SizePreset("preset.video_480p", 854, 480, "px", "cat.video", ["480p", "sd", "streaming"]),
+    SizePreset("preset.video_720p", 1280, 720, "px", "cat.video", ["720p", "hd", "broadcast"]),
+    SizePreset("preset.video_1080p", 1920, 1080, "px", "cat.video", ["1080p", "full hd", "youtube"]),
+    SizePreset("preset.video_2k", 2048, 1080, "px", "cat.video", ["2k", "dci", "cine"]),
+    SizePreset("preset.video_1440p", 2560, 1440, "px", "cat.video", ["1440p", "qhd", "gaming"]),
+    SizePreset("preset.video_4k_uhd", 3840, 2160, "px", "cat.video", ["4k", "uhd", "netflix"]),
+    SizePreset("preset.video_4k_dci", 4096, 2160, "px", "cat.video", ["4k", "dci", "cine digital"]),
+    SizePreset("preset.video_8k", 7680, 4320, "px", "cat.video", ["8k", "uhd"]),
+    SizePreset("preset.ig_square", 1080, 1080, "px", "cat.social", ["instagram", "fb", "feed", "1:1"]),
+    SizePreset("preset.ig_landscape", 1080, 566, "px", "cat.social", ["instagram", "horizontal"]),
+    SizePreset("preset.ig_portrait", 1080, 1350, "px", "cat.social", ["instagram", "vertical", "4:5"]),
+    SizePreset("preset.ig_stories", 1080, 1920, "px", "cat.social", ["stories", "reels", "tiktok", "9:16", "instagram"]),
+    SizePreset("preset.ig_profile", 320, 320, "px", "cat.social", ["perfil", "avatar"]),
+    SizePreset("preset.fb_feed", 1200, 630, "px", "cat.social", ["facebook", "feed", "publicacion"]),
+    SizePreset("preset.fb_cover", 820, 312, "px", "cat.social", ["facebook", "cover", "portada"]),
+    SizePreset("preset.fb_stories", 1080, 1920, "px", "cat.social", ["facebook", "stories"]),
+    SizePreset("preset.yt_thumbnail", 1280, 720, "px", "cat.social", ["youtube", "thumbnail", "miniatura"]),
+    SizePreset("preset.yt_channel", 2560, 1440, "px", "cat.social", ["youtube", "banner", "canal"]),
+    SizePreset("preset.yt_shorts", 1080, 1920, "px", "cat.social", ["youtube", "shorts", "vertical"]),
+    SizePreset("preset.tiktok", 1080, 1920, "px", "cat.social", ["tiktok", "reels", "shorts", "vertical"]),
+    SizePreset("preset.twitter", 1600, 900, "px", "cat.social", ["twitter", "x", "post"]),
+    SizePreset("preset.linkedin", 1200, 627, "px", "cat.social", ["linkedin", "profesional"]),
+    SizePreset("preset.pinterest", 1000, 1500, "px", "cat.social", ["pinterest", "pin", "2:3"]),
 ]
+
+_PRESET_CACHE_LANG = None
+_NAME_TO_PRESET: Dict[str, SizePreset] = {}
+
+
+def _build_preset_cache():
+    """Genera una caché O(1) de los presets, reactiva al cambio de idioma."""
+    global _PRESET_CACHE_LANG, _NAME_TO_PRESET
+    if _PRESET_CACHE_LANG != tr.current_lang:
+        _NAME_TO_PRESET = {p.name: p for p in SIZE_PRESETS}
+        _PRESET_CACHE_LANG = tr.current_lang
 
 
 def get_preset_categories() -> List[str]:
-    """Obtiene categorías únicas de presets."""
+    """Obtiene categorías únicas de presets (traducidas)."""
     return sorted(set(p.category for p in SIZE_PRESETS))
 
 
-def get_presets_by_category(category: str) -> List[SizePreset]:
-    """Obtiene presets de una categoría específica."""
-    return [p for p in SIZE_PRESETS if p.category == category]
+def get_presets_by_category(category_name: str) -> List[SizePreset]:
+    """Obtiene presets de una categoría específica (por nombre traducido)."""
+    return [p for p in SIZE_PRESETS if p.category == category_name]
 
 
 def get_all_preset_names() -> List[str]:
-    """Obtiene todos los nombres de presets."""
-    return [p.name for p in SIZE_PRESETS]
+    """Obtiene todos los nombres de presets (traducidos) en O(1) vía caché."""
+    _build_preset_cache()
+    return list(_NAME_TO_PRESET.keys())
 
 
 def get_preset_by_name(name: str) -> SizePreset:
-    """Obtiene un preset por nombre."""
-    for preset in SIZE_PRESETS:
-        if preset.name == name:
-            return preset
-    return SIZE_PRESETS[0]
+    """Obtiene un preset por su nombre traducido utilizando caché O(1)."""
+    _build_preset_cache()
+    return _NAME_TO_PRESET.get(name, SIZE_PRESETS[0])
 
 
 def search_presets(query: str) -> List[SizePreset]:
-    """Busca presets por nombre o keywords."""
+    """Busca presets por nombre traducido o keywords."""
     if not query or not query.strip():
         return SIZE_PRESETS
     
