@@ -46,6 +46,7 @@ def test_release_workflow_is_tag_matrix_based():
     assert "-acceptEula wix7" in workflow
     assert "pycresizer-windows-${{ github.ref_name }}.zip" in workflow
     assert "pycresizer-windows-${{ github.ref_name }}.msi" in workflow
+    assert "-pdbtype none" in workflow
     assert "Copy-Item -Path dist/PycResizer.exe" not in workflow
 
 
