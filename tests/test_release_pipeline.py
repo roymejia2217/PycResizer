@@ -17,13 +17,14 @@ def test_readme_uses_docs_assets_only():
 
     for relative_path in [
         "docs/banner.webp",
-        "docs/logo.png",
         "docs/screenshots/ui.webp",
         "docs/screenshots/preset.webp",
         "docs/screenshots/modo.webp",
     ]:
         assert relative_path in readme
         assert (ROOT / relative_path).is_file()
+
+    assert (ROOT / "docs/logo.png").is_file()
 
 
 def test_release_workflow_is_tag_matrix_based():
@@ -38,6 +39,7 @@ def test_release_workflow_is_tag_matrix_based():
     assert "contents: write" in workflow
     assert "gh release create" in workflow
     assert "actions/upload-artifact@v4" in workflow
+    assert workflow.count("actions/checkout@v4") >= 2
     assert "scripts/build_deb.sh" in workflow
 
 
