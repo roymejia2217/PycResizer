@@ -1,151 +1,151 @@
 <p align="center">
-  <img src="assets/pyc.png" alt="PycResizer Logo" width="128" height="128">
+  <img src="docs/banner.webp" alt="PycResizer banner" width="900">
+</p>
+
+<p align="center">
+  <img src="docs/logo.png" alt="PycResizer logo" width="128" height="128">
 </p>
 
 <h1 align="center">PycResizer</h1>
 
 <p align="center">
-  <b>English Version</b> •
-  <a href="README_ES.md">Versión en Español</a>
+  Batch image resizing for photos, documents, social media assets, and display formats.
 </p>
 
 <p align="center">
   <a href="https://www.python.org/">
-    <img src="https://img.shields.io/badge/Python-3.10+-blue.svg" alt="Python Version">
+    <img src="https://img.shields.io/badge/Python-3.10+-blue.svg" alt="Python 3.10+">
   </a>
   <a href="https://pypi.org/project/Pillow/">
-    <img src="https://img.shields.io/badge/Pillow-10.0.0+-orange.svg" alt="Pillow">
+    <img src="https://img.shields.io/badge/Pillow-12.1.1-orange.svg" alt="Pillow">
   </a>
   <a href="https://pypi.org/project/ttkbootstrap/">
-    <img src="https://img.shields.io/badge/ttkbootstrap-1.10.1+-purple.svg" alt="ttkbootstrap">
+    <img src="https://img.shields.io/badge/ttkbootstrap-1.20.1-purple.svg" alt="ttkbootstrap">
   </a>
   <a href="LICENSE">
-    <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
+    <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License">
   </a>
-  <a href="https://github.com/pyinstaller/pyinstaller">
-    <img src="https://img.shields.io/badge/PyInstaller-6.0+-red.svg" alt="PyInstaller">
+  <a href="https://pyinstaller.org/">
+    <img src="https://img.shields.io/badge/PyInstaller-6.19.0-red.svg" alt="PyInstaller">
   </a>
 </p>
 
-Batch image processor with a graphical user interface. Resize multiple images simultaneously using built-in presets and unit conversion capabilities.
+## Overview
 
-## Key Features
+PycResizer is a desktop batch image processor built with Python, Tkinter, ttkbootstrap, and Pillow. It resizes multiple images at once using manual dimensions, physical units, DPI conversion, and curated presets.
 
-- Batch resizing of multiple images
-- 44 built-in presets (Photos, Documents, Social Media, Display)
-- 4 Resizing Modes: FIT, STRETCH, FILL, CROP
-- Unit conversion: px, cm, mm, inches
-- Tabbed interface (Basic and Advanced settings)
-- Parallel processing with dynamic workers
-- Support for PNG, JPEG, BMP, TIFF, WEBP, and GIF
+## Features
 
-## Prerequisites
-
-- Python 3.10 or higher
-- Windows (for portable executable)
-
-## Installation
-
-### As a Portable Application
-
-Download the `PycResizer.exe` executable from the Releases section and run it directly.
-
-### From Source Code
-
-```bash
-# Clone the repository
-git clone https://github.com/tu-usuario/PycResizer.git
-cd PycResizer
-
-# Create virtual environment
-python -m venv venv
-venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run application
-python src/app.py
-```
-
-### Building the Executable
-
-```bash
-pip install pyinstaller
-pyinstaller pycresizer.spec --clean
-```
-
-The executable will be generated in `dist/PycResizer.exe`.
-
-## Usage
-
-1. Select individual images or an entire folder.
-2. Choose a preset or enter dimensions manually.
-3. Select the desired resizing mode.
-4. Define the output folder.
-5. Click **Start**.
-
-### Resizing Modes
-
-| Mode | Description |
-|------|-------------|
-| FIT | Resizes the image while maintaining its aspect ratio. |
-| STRETCH | Stretches the image to the exact dimensions specified. |
-| FILL | Fills the target area, adding a background if necessary. |
-| CROP | Resizes and crops the image from the center to fill the area. |
-
-## Project Structure
-
-```
-PycResizer/
-├── assets/                 # Visual assets and icons
-├── src/
-│   ├── app.py              # Application entry point
-│   ├── core/               # Processing logic
-│   │   ├── batch_handler.py
-│   │   ├── image_processor.py
-│   │   └── unit_converter.py
-│   ├── gui/                # User interface components
-│   │   ├── components.py
-│   │   ├── main_window.py
-│   │   ├── settings_window.py
-│   │   └── validators.py
-│   └── utils/              # Shared utilities
-│       ├── config.py
-│       ├── exceptions.py
-│       ├── i18n.py
-│       └── icons.py
-├── tests/                  # Test suites
-│   ├── test_batch_performance.py
-│   ├── test_core_resilience.py
-│   ├── test_crop_id_card.py
-│   ├── test_presets_i18n.py
-│   ├── test_resize_modes.py
-│   └── test_unit_conversion.py
-├── pycresizer.spec         # PyInstaller build specification
-└── requirements.txt        # Project dependencies
-```
+- Batch processing for PNG, JPEG, BMP, TIFF, WEBP, and GIF files.
+- Presets for photos, ISO paper sizes, documents, ID cards, displays, video, and social media.
+- Resize modes for fit, stretch, fill, and crop workflows.
+- Unit conversion between pixels, centimeters, millimeters, and inches.
+- DPI-aware output sizing for print-oriented formats.
+- Parallel processing with cancellation support.
+- English and Spanish interface translations inside the application.
+- Automated Windows executable and Debian package builds from Git tags.
 
 ## Screenshots
 
 ### Main Interface
 
 <p align="center">
-  <img src="assets/ui.webp" alt="PycResizer Main Interface" width="450">
+  <img src="docs/screenshots/ui.webp" alt="PycResizer main interface" width="520">
 </p>
 
-### Available Presets
+### Presets
 
 <p align="center">
-  <img src="assets/preset.webp" alt="Available Presets" width="450">
+  <img src="docs/screenshots/preset.webp" alt="PycResizer preset selector" width="520">
 </p>
 
-### Resizing Modes
+### Resize Modes
 
 <p align="center">
-  <img src="assets/modo.webp" alt="Resizing Modes" width="450">
+  <img src="docs/screenshots/modo.webp" alt="PycResizer resize modes" width="520">
 </p>
+
+## Requirements
+
+- Python 3.10 or newer.
+- Tkinter support in the Python installation.
+- Linux users need a desktop environment capable of running Tk applications.
+
+## Run From Source
+
+```bash
+git clone <repository-url>
+cd PycResizer
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python src/app.py
+```
+
+On Windows, activate the virtual environment with:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+## Build Locally
+
+Create a PyInstaller build:
+
+```bash
+python -m pip install -r requirements.txt
+pyinstaller pycresizer.spec --clean --noconfirm
+```
+
+Expected outputs:
+
+- Windows: `dist/PycResizer.exe`
+- Linux: `dist/PycResizer`
+
+Create a Debian package after a Linux PyInstaller build:
+
+```bash
+scripts/build_deb.sh
+```
+
+The Debian package is written to `dist/packages/`.
+
+## Release Builds
+
+GitHub Actions builds release artifacts when a Git tag is pushed. The workflow uses one matrix for Windows and Linux:
+
+- Windows builds a portable `.exe`.
+- Linux builds a standalone executable archive and a Debian `.deb` package.
+- The release job publishes all generated artifacts to the matching GitHub Release.
+
+Example:
+
+```bash
+git tag v1.1.0
+git push origin v1.1.0
+```
+
+## Project Structure
+
+```text
+PycResizer/
+├── .github/workflows/        # Release automation
+├── assets/                   # Runtime application icon
+├── docs/                     # README banner, logo, and screenshots
+│   └── screenshots/
+├── packaging/linux/          # Linux desktop integration files
+├── scripts/                  # Build and packaging scripts
+├── src/
+│   ├── app.py                # Application entry point
+│   ├── core/                 # Image processing and batch logic
+│   ├── gui/                  # Tkinter/ttkbootstrap interface
+│   └── utils/                # Configuration, icons, i18n, and errors
+├── tests/                    # Automated and validation tests
+├── pycresizer.spec           # PyInstaller build specification
+└── requirements.txt          # Pinned build/runtime dependencies
+```
 
 ## License
 
-MIT License - See the LICENSE file for more details.
+PycResizer is released under the MIT License. See [LICENSE](LICENSE) for details.

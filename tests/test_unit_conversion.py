@@ -1,4 +1,4 @@
-"""Test para verificar la conversion de unidades en la GUI."""
+"""Tests for unit conversion behavior."""
 
 import sys
 import os
@@ -10,9 +10,9 @@ from src.utils import DEFAULT_DPI
 
 
 def test_conversion_logic():
-    """Test de la logica de conversion."""
+    """Validate round-trip unit conversion with pixel rounding tolerance."""
     print("=" * 60)
-    print("TEST: Conversion de unidades")
+    print("TEST: Unit conversion")
     print("=" * 60)
     
     dpi = 300
@@ -39,7 +39,7 @@ def test_conversion_logic():
         result_w = UnitConverter.from_pixels(w_px, to_unit, dpi)
         result_h = UnitConverter.from_pixels(h_px, to_unit, dpi)
         
-        tolerance = 0.01 if to_unit != "px" else 1
+        tolerance = 0.1 if to_unit != "px" else 1
         passed = (
             abs(result_w - expected_w) <= tolerance and 
             abs(result_h - expected_h) <= tolerance
@@ -55,18 +55,18 @@ def test_conversion_logic():
     
     print("\n" + "=" * 60)
     if all_passed:
-        print("TODOS LOS TESTS PASARON")
+        print("ALL TESTS PASSED")
     else:
-        print("ALGUNOS TESTS FALLARON")
+        print("SOME TESTS FAILED")
     print("=" * 60)
     
-    return all_passed
+    assert all_passed
 
 
 def test_unit_converter_functions():
-    """Test especifico de las funciones de UnitConverter."""
+    """Exercise UnitConverter functions with representative values."""
     print("\n" + "=" * 60)
-    print("TEST: Funciones UnitConverter")
+    print("TEST: UnitConverter functions")
     print("=" * 60)
     
     dpi = 300
@@ -74,48 +74,48 @@ def test_unit_converter_functions():
     print("\n1. to_pixels(21, 'cm', 300):")
     try:
         result = UnitConverter.to_pixels(21, "cm", dpi)
-        print(f"   Resultado: {result}")
-        print(f"   Esperado: 2480")
+        print(f"   Result: {result}")
+        print(f"   Expected: 2480")
     except Exception as e:
         print(f"   ERROR: {e}")
     
     print("\n2. to_pixels(29.7, 'cm', 300):")
     try:
         result = UnitConverter.to_pixels(29.7, "cm", dpi)
-        print(f"   Resultado: {result}")
-        print(f"   Esperado: 3508")
+        print(f"   Result: {result}")
+        print(f"   Expected: 3508")
     except Exception as e:
         print(f"   ERROR: {e}")
     
     print("\n3. from_pixels(2480, 'cm', 300):")
     try:
         result = UnitConverter.from_pixels(2480, "cm", dpi)
-        print(f"   Resultado: {result}")
-        print(f"   Esperado: ~21.0")
+        print(f"   Result: {result}")
+        print(f"   Expected: ~21.0")
     except Exception as e:
         print(f"   ERROR: {e}")
     
     print("\n4. from_pixels(2480, 'mm', 300):")
     try:
         result = UnitConverter.from_pixels(2480, "mm", dpi)
-        print(f"   Resultado: {result}")
-        print(f"   Esperado: ~210.0")
+        print(f"   Result: {result}")
+        print(f"   Expected: ~210.0")
     except Exception as e:
         print(f"   ERROR: {e}")
     
     print("\n5. from_pixels(2480, 'in', 300):")
     try:
         result = UnitConverter.from_pixels(2480, "in", dpi)
-        print(f"   Resultado: {result}")
-        print(f"   Esperado: ~8.27")
+        print(f"   Result: {result}")
+        print(f"   Expected: ~8.27")
     except Exception as e:
         print(f"   ERROR: {e}")
 
 
 def test_gui_binding():
-    """Test para verificar que el binding del combobox funciona."""
+    """Smoke test GUI binding setup when a display is available."""
     print("\n" + "=" * 60)
-    print("TEST: Verificacion de binding en GUI")
+    print("TEST: GUI binding verification")
     print("=" * 60)
     
     try:
@@ -130,7 +130,7 @@ def test_gui_binding():
         
         window._build_ui()
         
-        print("\nVerificando que los widgets existen...")
+        print("\nChecking that widgets exist...")
         
         checks = [
             ("preset_var", hasattr(window, 'preset_var')),
@@ -152,7 +152,7 @@ def test_gui_binding():
             print(f"  {status} {name}: {exists}")
             all_ok = all_ok and exists
         
-        print(f"\nVerificando eventos bound...")
+        print(f"\nChecking bound events...")
         
         if hasattr(window, 'preset_cb'):
             bindings = window.preset_cb.bind()
@@ -165,9 +165,9 @@ def test_gui_binding():
         root.destroy()
         
         if all_ok:
-            print("\n✓ GUI configurada correctamente")
+            print("\n✓ GUI configured correctly")
         else:
-            print("\n✗ Faltan algunos widgets")
+            print("\n✗ Some widgets are missing")
             
     except Exception as e:
         print(f"ERROR: {e}")

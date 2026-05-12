@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=PycResizer
+GenericName=Batch Image Resizer
+Comment=Resize batches of images with presets, units, and crop modes
+Exec=/opt/pycresizer/PycResizer
+Icon=pycresizer
+Terminal=false
+Categories=Graphics;Photography;Utility;
+Keywords=image;resize;batch;photo;picture;
+StartupNotify=true

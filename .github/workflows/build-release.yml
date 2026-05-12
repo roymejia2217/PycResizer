@@ -1,0 +1,103 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+      - "*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows
+            os: windows-latest
+            artifact_name: pycresizer-windows
+            package_deb: false
+          - name: Linux
+            os: ubuntu-latest
+            artifact_name: pycresizer-linux
+            package_deb: true
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install Linux desktop build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-tk tk xz-utils
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install pytest
+
+      - name: Run stable tests
+        run: |
+          python -m pytest tests/test_core_resilience.py tests/test_crop_id_card.py tests/test_presets_i18n.py tests/test_resize_modes.py tests/test_unit_conversion.py tests/test_release_pipeline.py -q
+
+      - name: Build PyInstaller artifact
+        run: |
+          pyinstaller pycresizer.spec --clean --noconfirm
+
+      - name: Package Windows executable
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path release-assets
+          Compress-Archive -Path dist/PycResizer.exe -DestinationPath release-assets/pycresizer-windows-${{ github.ref_name }}.zip -Force
+
+      - name: Package Linux executable
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p release-assets
+          tar -C dist -czf "release-assets/pycresizer-linux-${GITHUB_REF_NAME}.tar.gz" PycResizer
+
+      - name: Build Debian package
+        if: matrix.package_deb
+        run: |
+          PACKAGE_VERSION="${GITHUB_REF_NAME#v}" scripts/build_deb.sh
+          cp dist/packages/*.deb release-assets/
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}-${{ github.ref_name }}
+          path: release-assets/*
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+
+      - name: Publish release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mapfile -d '' files < <(find release-assets -type f -print0 | sort -z)
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No release assets were downloaded" >&2
+            exit 1
+          fi
+          gh release create "${GITHUB_REF_NAME}" "${files[@]}" --verify-tag --generate-notes

@@ -1,12 +1,10 @@
 # -*- mode: python ; coding: utf-8 -*-
-"""
-Spec file para construir PycResizer con PyInstaller (onefile).
-Ejecutar: pyinstaller pycresizer.spec --clean
-"""
+"""PyInstaller build specification for PycResizer."""
 
-import os
-import sys
 from pathlib import Path
+
+from PyInstaller.utils.hooks import collect_data_files
+
 
 block_cipher = None
 
@@ -14,27 +12,23 @@ project_root = Path(SPECPATH)
 assets_dir = project_root / "assets"
 icon_file = assets_dir / "icon.ico"
 
-icon_exists = icon_file.exists()
-
-venv_path = Path(sys.prefix)
-site_packages = venv_path / "Lib" / "site-packages"
-ttkbootstrap_icons_bs_path = site_packages / "ttkbootstrap_icons_bs"
-
 datas_list = []
 
-if icon_exists:
+if icon_file.exists():
     datas_list.append((str(icon_file), "assets"))
-    print(f"[INFO] Icono de app encontrado: {icon_file}")
-
-if ttkbootstrap_icons_bs_path.exists():
-    assets_path = ttkbootstrap_icons_bs_path / "assets"
-    if assets_path.exists():
-        datas_list.append((str(assets_path), "ttkbootstrap_icons_bs/assets"))
-        print(f"[INFO] Iconos BS encontrados: {assets_path}")
-    else:
-        print(f"[WARN] assets no encontrado en: {ttkbootstrap_icons_bs_path}")
+    print(f"[INFO] Application icon found: {icon_file}")
 else:
-    print(f"[WARN] ttkbootstrap_icons_bs no encontrado en: {ttkbootstrap_icons_bs_path}")
+    print(f"[WARN] Application icon not found: {icon_file}")
+
+try:
+    icon_data_files = collect_data_files("ttkbootstrap_icons_bs", includes=["assets/*"])
+    if icon_data_files:
+        datas_list.extend(icon_data_files)
+        print(f"[INFO] Bootstrap icon assets collected: {len(icon_data_files)} entries")
+    else:
+        print("[WARN] No Bootstrap icon assets were collected")
+except Exception as exc:
+    print(f"[WARN] Bootstrap icon assets could not be collected: {exc}")
 
 a = Analysis(
     [str(project_root / "src" / "app.py")],
@@ -47,6 +41,7 @@ a = Analysis(
         "PIL.ImageOps",
         "PIL.ImageDraw",
         "PIL.ImageFilter",
+        "PIL._tkinter_finder",
         "piexif",
         "ttkbootstrap",
         "ttkbootstrap.themes",
@@ -98,11 +93,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=str(icon_file) if icon_exists else None,
-    version_info={
-        "Version": "1.1.0",
-        "CompanyName": "PycResizer",
-        "FileDescription": "Procesador de imágenes por lotes",
-        "ProductName": "PycResizer",
-    },
+    icon=str(icon_file) if icon_file.exists() else None,
 )
