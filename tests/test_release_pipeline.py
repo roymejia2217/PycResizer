@@ -41,6 +41,12 @@ def test_release_workflow_is_tag_matrix_based():
     assert "actions/upload-artifact@v4" in workflow
     assert workflow.count("actions/checkout@v4") >= 2
     assert "scripts/build_deb.sh" in workflow
+    assert "dotnet tool install --global wix" in workflow
+    assert "wix build" in workflow
+    assert "-acceptEula wix7" in workflow
+    assert "pycresizer-windows-${{ github.ref_name }}.zip" in workflow
+    assert "pycresizer-windows-${{ github.ref_name }}.msi" in workflow
+    assert "Copy-Item -Path dist/PycResizer.exe" not in workflow
 
 
 def test_pyinstaller_spec_includes_tk_image_bridge():
@@ -74,3 +80,18 @@ def test_desktop_entry_matches_freedesktop_basics():
     assert "Exec=/opt/pycresizer/PycResizer" in desktop
     assert "Icon=pycresizer" in desktop
     assert "Terminal=false" in desktop
+
+
+def test_windows_msi_definition_packages_pyinstaller_binary():
+    wxs_path = ROOT / "packaging" / "windows" / "PycResizer.wxs"
+    wxs = wxs_path.read_text(encoding="utf-8")
+
+    assert "<Package" in wxs
+    assert "Name=\"PycResizer\"" in wxs
+    assert "Manufacturer=\"PycResizer\"" in wxs
+    assert "<MajorUpgrade" in wxs
+    assert "<MediaTemplate" in wxs
+    assert "ProgramFiles64Folder" in wxs
+    assert "Source=\"$(var.SourceDir)\\PycResizer.exe\"" in wxs
+    assert "<Shortcut" in wxs
+    assert "ApplicationProgramsFolder" in wxs

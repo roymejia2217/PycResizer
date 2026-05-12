@@ -62,6 +62,20 @@ jobs:
           New-Item -ItemType Directory -Force -Path release-assets
           Compress-Archive -Path dist/PycResizer.exe -DestinationPath release-assets/pycresizer-windows-${{ github.ref_name }}.zip -Force
 
+      - name: Build Windows MSI installer
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          dotnet tool install --global wix --version 7.0.0
+          wix --version
+          $version = "${{ github.ref_name }}".TrimStart("v")
+          wix build packaging/windows/PycResizer.wxs `
+            -arch x64 `
+            -define SourceDir="$((Resolve-Path dist).Path)" `
+            -define ProductVersion="$version" `
+            -out "release-assets/pycresizer-windows-${{ github.ref_name }}.msi" `
+            -acceptEula wix7
+
       - name: Package Linux executable
         if: runner.os == 'Linux'
         run: |

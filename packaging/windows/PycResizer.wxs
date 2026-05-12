@@ -1,0 +1,50 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package
+    Name="PycResizer"
+    Manufacturer="PycResizer"
+    Version="$(var.ProductVersion)"
+    UpgradeCode="8c5523ef-310d-4b23-8b3f-e973b3d38bb2"
+    Scope="perMachine">
+
+    <MajorUpgrade
+      DowngradeErrorMessage="A newer version of PycResizer is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="PycResizer">
+        <Component Id="PycResizerExecutable" Guid="d3542d0a-f1dc-4ff0-9b77-301deca73455">
+          <File
+            Id="PycResizerExe"
+            Source="$(var.SourceDir)\PycResizer.exe"
+            KeyPath="yes" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="PycResizer">
+        <Component Id="ApplicationShortcut" Guid="c8feadf4-4a68-47eb-b762-f8a0e7fcc20e">
+          <Shortcut
+            Id="ApplicationStartMenuShortcut"
+            Name="PycResizer"
+            Description="Batch image resizer"
+            Target="[INSTALLFOLDER]PycResizer.exe"
+            WorkingDirectory="INSTALLFOLDER" />
+          <RemoveFolder Id="RemoveApplicationProgramsFolder" On="uninstall" />
+          <RegistryValue
+            Root="HKCU"
+            Key="Software\PycResizer"
+            Name="installed"
+            Type="integer"
+            Value="1"
+            KeyPath="yes" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+
+    <Feature Id="MainFeature" Title="PycResizer" Level="1">
+      <ComponentRef Id="PycResizerExecutable" />
+      <ComponentRef Id="ApplicationShortcut" />
+    </Feature>
+  </Package>
+</Wix>
